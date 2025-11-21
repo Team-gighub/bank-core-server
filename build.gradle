@@ -14,7 +14,7 @@ java {
 	}
 }
 
-subprojects {
+allprojects {
     apply plugin: 'java'
 
     group = 'com.bank'
