@@ -4,8 +4,12 @@ plugins {
 
 dependencies {
     implementation project(':common')
-    implementation project(':external-system')   // 초기에는 직접 의존 ( 부분 헥사고날 )
+    // implementation project(':external-system')   // 직접 의존 제거
 
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    
+    implementation 'org.springframework:spring-context'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     runtimeOnly 'com.mysql:mysql-connector-j'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
