@@ -1,1 +1,5 @@
 rootProject.name = 'bank-core'
+
+include 'common'
+include 'deposit-system'
+include 'external-system'

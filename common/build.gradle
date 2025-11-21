@@ -1,0 +1,7 @@
+plugins {
+    id 'java'
+}
+
+dependencies {
+    // intentionally emtpy ( 순수 Java 모듈 )
+}
