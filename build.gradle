@@ -8,6 +8,7 @@ description = 'Bank Core Server'
 
 allprojects {
     apply plugin: 'java'
+    apply plugin: 'io.spring.dependency-management'
 
     group = 'com.bank'
     version = '0.0.1-SNAPSHOT'
@@ -27,15 +28,14 @@ allprojects {
             extendsFrom annotationProcessor
         }
     }
-
-    dependencies {
-        compileOnly 'org.projectlombok:lombok'
-        annotationProcessor 'org.projectlombok:lombok'
-    }
 }
 
 subprojects {
-    apply plugin: 'io.spring.dependency-management'
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.boot:spring-boot-dependencies:3.5.7"
+        }
+    }
 }
 
 dependencies {
@@ -43,6 +43,8 @@ dependencies {
     implementation project(':deposit-system')
     implementation project(':external-system')
 
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
