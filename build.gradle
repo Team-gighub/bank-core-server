@@ -34,6 +34,10 @@ allprojects {
     }
 }
 
+subprojects {
+    apply plugin: 'io.spring.dependency-management'
+}
+
 dependencies {
     implementation project(':common')
     implementation project(':deposit-system')
