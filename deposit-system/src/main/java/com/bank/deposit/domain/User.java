@@ -22,10 +22,10 @@ public class User {
     @Column(name = "itscno", length = 20, nullable = false)
     private String itscno;
 
-    @Column(name = "customer_name", length = 100, nullable = false)
+    @Column(name = "customer_name", length = 100)
     private String customerName;
 
-    @Column(name = "resident_reg_number_hash", length = 200, nullable = false)
+    @Column(name = "resident_reg_number_hash", length = 200)
     private String residentRegNumberHash;
 
     @Column(name = "ci", length = 88)
@@ -46,7 +46,7 @@ public class User {
     private UserStatus status = UserStatus.ACTIVE;
 
     @CreationTimestamp
-    @Column(name = "registered_at", updatable = false)
+    @Column(name = "registered_at")
     private LocalDateTime registeredAt;
 
     @UpdateTimestamp

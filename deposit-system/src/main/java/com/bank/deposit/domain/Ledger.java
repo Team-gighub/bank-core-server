@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "account_ledger")
+@Table(name = "ledger")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -26,24 +26,24 @@ public class Ledger {
     @Column(name = "account_id", length = 50)
     private String accountId;
 
-    @Column(name = "transaction_id", length = 50, nullable = false)
+    @Column(name = "transaction_id", length = 50)
     private String transactionId;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "transaction_type", nullable = false)
+    @Column(name = "transaction_type")
     private TransactionType transactionType;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "debit_credit", nullable = false)
+    @Column(name = "debit_credit")
     private DebitCredit debitCredit;
 
-    @Column(name = "amount", precision = 15, scale = 2, nullable = false)
+    @Column(name = "amount", precision = 15, scale = 2)
     private BigDecimal amount;
 
-    @Column(name = "balance_before", precision = 15, scale = 2, nullable = false)
+    @Column(name = "balance_before", precision = 15, scale = 2)
     private BigDecimal balanceBefore;
 
-    @Column(name = "balance_after", precision = 15, scale = 2, nullable = false)
+    @Column(name = "balance_after", precision = 15, scale = 2)
     private BigDecimal balanceAfter;
 
     @Column(name = "counterparty_bank_code", length = 10)
@@ -61,7 +61,7 @@ public class Ledger {
     @Column(name = "transaction_datetime")
     private LocalDateTime transactionDatetime;
 
-    @Column(name = "value_date", nullable = false)
+    @Column(name = "value_date")
     private LocalDate valueDate;
 
     @Column(name = "is_cancelled")

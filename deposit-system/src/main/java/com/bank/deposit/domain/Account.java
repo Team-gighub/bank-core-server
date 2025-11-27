@@ -25,35 +25,35 @@ public class Account {
     private String accountId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "itscno", referencedColumnName = "itscno", insertable = false, updatable = false)
+    @JoinColumn(name = "itscno", referencedColumnName = "itscno")
     private User user;
 
-    @Column(name = "account_number", length = 50, nullable = false)
+    @Column(name = "account_number", length = 50)
     private String accountNumber;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "account_type", nullable = false)
+    @Column(name = "account_type")
     private AccountType accountType;
 
-    @Column(name = "balance", precision = 15, scale = 2, nullable = false)
+    @Column(name = "balance", precision = 15, scale = 2)
     private BigDecimal balance = BigDecimal.ZERO;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private AccountStatus status = AccountStatus.ACTIVE;
 
-    @Column(name = "open_date", nullable = false)
+    @Column(name = "open_date")
     private LocalDateTime openDate;
 
     @Column(name = "close_date")
     private LocalDateTime closeDate;
 
     @Version
-    @Column(name = "version", nullable = false)
+    @Column(name = "version")
     private Integer version = 1;
 
     @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @UpdateTimestamp

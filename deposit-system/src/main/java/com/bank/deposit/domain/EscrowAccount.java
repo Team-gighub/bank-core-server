@@ -23,13 +23,13 @@ public class EscrowAccount {
     private String escrowAccountId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id", referencedColumnName = "account_id", insertable = false, updatable = false)
+    @JoinColumn(name = "account_id", referencedColumnName = "account_id")
     private Account bankAccount;
 
-    @Column(name = "trace_id", length = 50, nullable = false)
+    @Column(name = "trace_id", length = 50)
     private String traceId;
 
-    @Column(name = "hold_amount", precision = 15, scale = 2, nullable = false)
+    @Column(name = "hold_amount")
     private BigDecimal holdAmount;
 
     @Column(name = "payer_bank_code", length = 10)
