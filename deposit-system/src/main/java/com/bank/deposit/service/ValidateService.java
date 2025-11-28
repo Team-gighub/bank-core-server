@@ -1,5 +1,6 @@
 package com.bank.deposit.service;
 
+import com.bank.common.port.ExternalValidatePort;
 import com.bank.deposit.domain.Account;
 import com.bank.deposit.domain.enums.AccountStatus;
 import com.bank.deposit.dto.PayerInfoDto;
@@ -21,6 +22,7 @@ public class ValidateService {
     private static final String OUR_BANK_CODE = "WOORIBANK";
 
     private final AccountRepository accountRepository;
+    private final ExternalValidatePort externalValidatePort;
 
     public String generateApprovalToken() {
         // TODO: 2-1. 승인 토큰 생성 (UUID 또는 JWT 등)
@@ -84,9 +86,8 @@ public class ValidateService {
 
     // 2. 타행 계좌 출금 인증 검증
     private boolean checkExternalAccountValidate(String bankCode, String accountNo, BigDecimal amount) {
-        // TODO: 오픈뱅킹(금융결제원) API로 외부 계좌 상태 조회
-        System.out.println(" → 외부 오픈뱅킹 계좌 상태 조회");
-        return true; // 샘플
+        log.info("{} check external account validate" , accountNo);
+        return externalValidatePort.isWithdrawalPossible(bankCode, accountNo, amount);
     }
 
 
