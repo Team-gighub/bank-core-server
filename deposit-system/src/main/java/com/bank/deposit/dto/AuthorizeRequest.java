@@ -5,12 +5,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class AuthorizeRequest {
-    private double amount;
+    private BigDecimal amount;
 
     private PayeeInfoDto payeeInfo;
 
