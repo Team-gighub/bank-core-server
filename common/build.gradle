@@ -3,5 +3,9 @@ plugins {
 }
 
 dependencies {
-    // intentionally emtpy ( 순수 Java 모듈 )
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    implementation 'org.springframework:spring-context'
+    implementation 'org.springframework:spring-web'
 }
