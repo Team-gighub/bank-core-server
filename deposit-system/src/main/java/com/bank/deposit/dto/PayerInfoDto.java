@@ -5,12 +5,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-
 @Getter
 @Setter
 @NoArgsConstructor
 @ToString
-public class PayeeInfo {
+public class PayerInfoDto {
 
     // 계좌 번호
     private String accountNo;
