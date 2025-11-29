@@ -1,5 +1,7 @@
 package com.bank.deposit.service;
 
+import com.bank.common.exception.CustomException;
+import com.bank.common.exception.ErrorCode;
 import com.bank.common.port.ExternalValidatePort;
 import com.bank.deposit.domain.Account;
 import com.bank.deposit.domain.enums.AccountStatus;
@@ -34,7 +36,7 @@ public class ValidateService {
                 : checkExternalAccountValidate(payer.getBankCode(), payer.getAccountNo(), amount);
 
         if (!isAccountActive) {
-            throw new RuntimeException("출금 불가");
+            throw new CustomException(ErrorCode.FORBIDDEN);
         }
 
         log.info("{} validate success" , payer.getAccountNo());
@@ -55,20 +57,20 @@ public class ValidateService {
         // 1-2. 계좌 상태 조회 (DB에서 상태 확인)
         Optional<Account> optAccount = accountRepository.findByAccountNumber(accountNo);
         if (optAccount.isEmpty()) {
-            throw new RuntimeException("계좌를 찾을 수 없습니다.");
+            throw new CustomException(ErrorCode.ACCOUNT_NOT_FOUND);
         }
 
         Account account = optAccount.get();
 
         if (account.getStatus() != AccountStatus.ACTIVE) {
-            throw new RuntimeException("계좌 상태가 비정상입니다.");
+            throw new CustomException(ErrorCode.ACCOUNT_ABNORMAL_STATUS);
         }
 
         log.info("check internal account status {}" , account.getStatus());
 
         // 1-5. 잔액 검증
         if (account.getBalance().compareTo(amount) < 0) {
-            throw new RuntimeException("잔액이 부족합니다.");
+            throw new CustomException(ErrorCode.BALANCE_INSUFFICIENT);
         }
         log.debug("internal account balance: {}, required amount: {}", account.getBalance(), amount);
 
