@@ -67,7 +67,7 @@ public class ValidateService {
         log.info("check internal account status {}" , account.getStatus());
 
         // 1-5. 잔액 검증
-        if (account.getBalance().doubleValue() < amount.doubleValue()) {
+        if (account.getBalance().compareTo(amount) < 0) {
             throw new RuntimeException("잔액이 부족합니다.");
         }
         log.info("check internal account balance {}, < {}" , account.getBalance().doubleValue(), amount);
