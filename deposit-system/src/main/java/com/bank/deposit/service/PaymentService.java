@@ -24,7 +24,8 @@ public class PaymentService {
         String escrowId = escrowService.createEscrow(request);
 
         // 4. response 반환
-        return new AuthorizeResponse(request.getOrderNo(), approvalToken, escrowId);
+        AuthorizeResponse response = new AuthorizeResponse(request.getOrderNo(), approvalToken, escrowId);
+        return response;
     }
 
 }
