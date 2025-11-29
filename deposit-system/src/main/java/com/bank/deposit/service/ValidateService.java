@@ -3,6 +3,7 @@ package com.bank.deposit.service;
 import com.bank.common.port.ExternalValidatePort;
 import com.bank.deposit.domain.Account;
 import com.bank.deposit.domain.enums.AccountStatus;
+import com.bank.deposit.domain.enums.BankCode;
 import com.bank.deposit.dto.PayerInfoDto;
 import com.bank.deposit.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +18,6 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class ValidateService {
-
-    // TODO: 임시로 지정해둔 당행 코드 변경하기
-    private static final String OUR_BANK_CODE = "WOORIBANK";
 
     private final AccountRepository accountRepository;
     private final ExternalValidatePort externalValidatePort;
@@ -46,7 +44,7 @@ public class ValidateService {
 
     // 1. 당행/타행 판단
     private boolean isSameBank(String payerBankCode) {
-        return OUR_BANK_CODE.equals(payerBankCode);
+        return BankCode.OUR_BANK.getCode().equals(payerBankCode);
     }
 
 
