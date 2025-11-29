@@ -68,7 +68,7 @@ public class LedgerService {
                 escrowAccount.getHoldAmount(),
                 BigDecimal.ZERO,
                 escrowAccount.getHoldAmount(),
-                "020",
+                escrowAccount.getPayerBankCode(),
                 escrowAccount.getPayerAccount(),
                 escrowAccount.getPayerName(),
                 Description.에스크로계좌입금
@@ -86,7 +86,7 @@ public class LedgerService {
                 escrowAccount.getHoldAmount(),
                 account.getBalance(),
                 account.getBalance().subtract(escrowAccount.getHoldAmount()),
-                "020",
+                escrowAccount.getPayerBankCode(),
                 escrowAccount.getPayerAccount(),
                 escrowAccount.getPayerName(),
                 Description.사용자계좌출금
@@ -112,7 +112,7 @@ public class LedgerService {
                 escrowAccount.getHoldAmount(),
                 BigDecimal.ZERO,
                 escrowAccount.getHoldAmount(),
-                "020",
+                escrowAccount.getPayerBankCode(),
                 escrowAccount.getPayerAccount(),
                 escrowAccount.getPayerName(),
                 Description.에스크로계좌입금
