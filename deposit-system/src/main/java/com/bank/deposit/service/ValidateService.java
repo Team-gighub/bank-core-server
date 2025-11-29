@@ -70,7 +70,7 @@ public class ValidateService {
         if (account.getBalance().compareTo(amount) < 0) {
             throw new RuntimeException("잔액이 부족합니다.");
         }
-        log.info("check internal account balance {}, < {}" , account.getBalance().doubleValue(), amount);
+        log.debug("internal account balance: {}, required amount: {}", account.getBalance(), amount);
 
         return true;
     }
