@@ -27,9 +27,6 @@ public class Ledger {
     @Column(name = "account_id", length = 50)
     private String accountId;
 
-    @Column(name = "transaction_id", length = 50)
-    private String transactionId;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "transaction_type")
     private TransactionType transactionType;
