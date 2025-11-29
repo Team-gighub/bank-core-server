@@ -1,7 +1,9 @@
 package com.bank.deposit.repository;
 
 import com.bank.deposit.domain.Account;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -11,4 +13,6 @@ import java.util.Optional;
 public interface AccountRepository extends JpaRepository<Account, String> {
     // 필요한 경우 추가적인 조회 메서드를 정의할 수 있습니다.
     Optional<Account> findByAccountNumber(String accountNumber);
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    Optional<Account> findAndLockById(String accountId);
 }

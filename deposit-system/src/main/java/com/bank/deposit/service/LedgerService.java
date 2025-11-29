@@ -76,7 +76,7 @@ public class LedgerService {
         ledgerRepository.save(escrowLedger);
 
         // 2. 사용자 계좌 Ledger (출금)
-        Account account = accountRepository.findById(escrowAccount.getBankAccount().getAccountId())
+        Account account = accountRepository.findAndLockById(escrowAccount.getBankAccount().getAccountId())
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT_VALUE));
 
         Ledger userLedger = createLedger(
