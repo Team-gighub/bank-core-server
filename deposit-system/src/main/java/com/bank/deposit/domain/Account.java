@@ -1,5 +1,7 @@
 package com.bank.deposit.domain;
 
+import com.bank.common.exception.CustomException;
+import com.bank.common.exception.ErrorCode;
 import com.bank.deposit.domain.enums.AccountStatus;
 import com.bank.deposit.domain.enums.AccountType;
 import com.bank.deposit.domain.enums.CreatedBy;
@@ -63,5 +65,18 @@ public class Account {
     @Enumerated(EnumType.STRING)
     @Column(name = "created_by")
     private CreatedBy createdBy;
+
+    public void withdraw(BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
+        }
+
+        if (this.balance.compareTo(amount) < 0) {
+            throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
+        }
+
+        this.balance = this.balance.subtract(amount);
+    }
+
 
 }

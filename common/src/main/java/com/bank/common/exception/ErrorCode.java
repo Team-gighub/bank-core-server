@@ -19,12 +19,18 @@ public enum ErrorCode {
 
     // 403 Forbidden
     FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON_004", "접근 권한이 없습니다."),
+    BALANCE_INSUFFICIENT(HttpStatus.FORBIDDEN, "BAL_3001", "잔액이 부족합니다."),
+    VALIDATION_TOKEN_EXPIRED(HttpStatus.FORBIDDEN, "VAL_3001", "검증 토큰이 만료되었습니다."),
+
+    // 404 Not Found
+    ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "ACCT_4001", "계좌를 조회할 수 없습니다."),
 
     // 405 Method Not Allowed
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "COMMON_005", "지원하지 않는 HTTP 메서드입니다."),
 
     // 500 Internal Server Error
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON_006", "서버 내부 오류가 발생했습니다.");
+
 
     private final HttpStatus status;
     private final String code;
