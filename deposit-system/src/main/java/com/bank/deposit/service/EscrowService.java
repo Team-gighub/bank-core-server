@@ -2,6 +2,7 @@ package com.bank.deposit.service;
 
 import com.bank.deposit.domain.EscrowAccount;
 import com.bank.deposit.domain.enums.HoldStatus;
+import com.bank.deposit.domain.enums.MerchantId;
 import com.bank.deposit.domain.enums.ReleaseType;
 import com.bank.deposit.dto.AuthorizeRequest;
 import com.bank.deposit.repository.EscrowAccountRepository;
@@ -68,7 +69,7 @@ public class EscrowService {
 
                 // 시간 및 주문 정보
                 .holdStartDatetime(now)
-                .merchantId("1")
+                .merchantId(MerchantId.WORKET.getCode())
                 .merchantOrderNo(request.getOrderNo())
                 .build();
 
