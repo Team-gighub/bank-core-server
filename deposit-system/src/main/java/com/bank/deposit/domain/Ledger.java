@@ -2,6 +2,7 @@ package com.bank.deposit.domain;
 
 import com.bank.deposit.domain.enums.ChannelType;
 import com.bank.deposit.domain.enums.DebitCredit;
+import com.bank.deposit.domain.enums.Description;
 import com.bank.deposit.domain.enums.TransactionType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -55,8 +56,9 @@ public class Ledger {
     @Column(name = "counterparty_name", length = 100)
     private String counterpartyName;
 
-    @Column(name = "description", length = 200)
-    private String description;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "description")
+    private Description description;
 
     @Column(name = "transaction_datetime")
     private LocalDateTime transactionDatetime;
