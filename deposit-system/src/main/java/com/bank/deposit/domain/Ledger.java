@@ -2,6 +2,7 @@ package com.bank.deposit.domain;
 
 import com.bank.deposit.domain.enums.ChannelType;
 import com.bank.deposit.domain.enums.DebitCredit;
+import com.bank.deposit.domain.enums.Description;
 import com.bank.deposit.domain.enums.TransactionType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,9 +26,6 @@ public class Ledger {
 
     @Column(name = "account_id", length = 50)
     private String accountId;
-
-    @Column(name = "transaction_id", length = 50)
-    private String transactionId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "transaction_type")
@@ -55,8 +53,9 @@ public class Ledger {
     @Column(name = "counterparty_name", length = 100)
     private String counterpartyName;
 
-    @Column(name = "description", length = 200)
-    private String description;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "description")
+    private Description description;
 
     @Column(name = "transaction_datetime")
     private LocalDateTime transactionDatetime;
@@ -79,5 +78,38 @@ public class Ledger {
     @Enumerated(EnumType.STRING)
     @Column(name = "channel_type")
     private ChannelType channelType = ChannelType.BAAS;
+
+    //원장 생성 메서드
+    public static Ledger create(
+            String accountId,
+            TransactionType transactionType,
+            DebitCredit debitCredit,
+            BigDecimal amount,
+            BigDecimal balanceBefore,
+            BigDecimal balanceAfter,
+            String counterpartyBankCode,
+            String counterpartyAccount,
+            String counterpartyName,
+            Description description
+    ) {
+
+        Ledger ledger = new Ledger();
+        ledger.accountId = accountId;
+        ledger.transactionType = transactionType;
+        ledger.debitCredit = debitCredit;
+        ledger.amount = amount;
+        ledger.balanceBefore = balanceBefore;
+        ledger.balanceAfter = balanceAfter;
+        ledger.counterpartyBankCode = counterpartyBankCode;
+        ledger.counterpartyAccount = counterpartyAccount;
+        ledger.counterpartyName = counterpartyName;
+        ledger.description = description;
+
+        ledger.transactionDatetime = LocalDateTime.now();
+        ledger.valueDate = LocalDate.now();
+        ledger.channelType = ChannelType.BAAS;
+
+        return ledger;
+    }
 
 }
