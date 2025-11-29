@@ -9,6 +9,12 @@ import java.math.BigDecimal;
 @Slf4j
 public class MockCommonBanking {
 
+    public boolean isDepositSuccess(String bankCode, String accountNo, BigDecimal amount) {
+        boolean result = KftcRandomResponseGenerator.randomSuccess();
+        log.info("[MOCK 공용금융망] 입금 성공 여부: {}", result);
+        return result;
+    }
+
     public boolean isWithdrawSuccess(String bankCode, String accountNo, BigDecimal amount) {
         boolean result = KftcRandomResponseGenerator.randomSuccess();
         log.info("[MOCK 공용금융망] 출금 성공 여부: {}", result);
