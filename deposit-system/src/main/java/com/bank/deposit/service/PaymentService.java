@@ -10,16 +10,21 @@ import org.springframework.stereotype.Service;
 public class PaymentService {
 
     private final ValidateService validateService;
+    private final ApprovalTokenService approvalTokenService;
+    private final EscrowService escrowService;
 
-    public AuthorizeResponse authorize(AuthorizeRequest requestDto) {
+    public AuthorizeResponse authorize(AuthorizeRequest request) {
         // 1. 계좌/잔액/타행 여부 검증
-        validateService.validatePayer(requestDto.getPayerInfo(), requestDto.getAmount());
+        validateService.validatePayer(request.getPayerInfo(), request.getAmount());
 
-        // 2. 승인 토큰 발급 -----------------------------------------
-        String approvalToken = validateService.generateApprovalToken();
+        // 2. 승인 토큰 발급
+        String approvalToken = approvalTokenService.generate();
 
-        // 3. response 반환
-        return new AuthorizeResponse(approvalToken);
+        // 3. escrow 테이블 등록
+        String escrowId = escrowService.createEscrow(request);
+
+        // 4. response 반환
+        return new AuthorizeResponse(request.getOrderNo(), approvalToken, escrowId);
     }
 
 }
