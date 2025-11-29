@@ -30,7 +30,7 @@ public class ApprovalTokenService {
 
             return now < expireTime;
 
-        } catch (Exception e) {
+        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
             return false;
         }
     }
