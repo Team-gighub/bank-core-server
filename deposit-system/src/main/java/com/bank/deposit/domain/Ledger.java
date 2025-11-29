@@ -79,4 +79,37 @@ public class Ledger {
     @Column(name = "channel_type")
     private ChannelType channelType = ChannelType.BAAS;
 
+    //원장 생성 메서드
+    public static Ledger create(
+            String accountId,
+            TransactionType transactionType,
+            DebitCredit debitCredit,
+            BigDecimal amount,
+            BigDecimal balanceBefore,
+            BigDecimal balanceAfter,
+            String counterpartyBankCode,
+            String counterpartyAccount,
+            String counterpartyName,
+            Description description
+    ) {
+
+        Ledger ledger = new Ledger();
+        ledger.accountId = accountId;
+        ledger.transactionType = transactionType;
+        ledger.debitCredit = debitCredit;
+        ledger.amount = amount;
+        ledger.balanceBefore = balanceBefore;
+        ledger.balanceAfter = balanceAfter;
+        ledger.counterpartyBankCode = counterpartyBankCode;
+        ledger.counterpartyAccount = counterpartyAccount;
+        ledger.counterpartyName = counterpartyName;
+        ledger.description = description;
+
+        ledger.transactionDatetime = LocalDateTime.now();
+        ledger.valueDate = LocalDate.now();
+        ledger.channelType = ChannelType.BAAS;
+
+        return ledger;
+    }
+
 }
