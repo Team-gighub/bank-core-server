@@ -8,9 +8,9 @@ import com.bank.deposit.domain.enums.BankCode;
 import com.bank.deposit.dto.ApprovalRequest;
 import com.bank.deposit.dto.ApprovalResponse;
 import com.bank.deposit.repository.EscrowAccountRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
