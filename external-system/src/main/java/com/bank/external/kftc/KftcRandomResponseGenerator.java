@@ -4,6 +4,10 @@ import java.util.Random;
 
 public class KftcRandomResponseGenerator {
 
+    private KftcRandomResponseGenerator() {
+        throw new UnsupportedOperationException("Utility class");
+    }
+
     private static final Random RANDOM = new Random();
 
     /**
