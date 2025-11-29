@@ -18,9 +18,9 @@ public class PaymentController {
     private final ApprovalService approveService;
 
     @PostMapping("/approval")
-    public ApprovalResponse createEscrow(@RequestBody ApprovalRequest request)
+    public ApiResponse<ApprovalResponse> approvePayment(@RequestBody ApprovalRequest request)
     {
         ApprovalResponse response = approveService.recodeLedger(request);
-        return response;
+        return ApiResponse.success(response);
     }
 }
