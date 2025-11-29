@@ -1,6 +1,7 @@
 package com.bank.controller;
 
 
+import com.bank.common.response.ApiResponse;
 import com.bank.deposit.dto.AuthorizeRequest;
 import com.bank.deposit.dto.AuthorizeResponse;
 import com.bank.deposit.service.PaymentService;
@@ -19,12 +20,12 @@ public class PaymentController {
     private final PaymentService paymentService;
 
     @PostMapping("/authorize")
-    public ResponseEntity<AuthorizeResponse> authorize(@RequestBody AuthorizeRequest request)
+    public ApiResponse<AuthorizeResponse> authorize(@RequestBody AuthorizeRequest request)
     {
         /* [계정계] 결제 요청 로직
         * | 결제하기 전, 요청한 결제가 유효하고 정상적인 사용자의 요청인지 인증하는 단계 | */
 
-        AuthorizeResponse response = paymentService.authorize(request);
-        return ResponseEntity.ok(response);
+        ApiResponse<AuthorizeResponse> response = paymentService.authorize(request);
+        return response;
     }
 }
