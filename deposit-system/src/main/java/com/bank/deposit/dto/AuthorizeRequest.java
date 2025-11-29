@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 @Builder
 public class AuthorizeRequest {
     private BigDecimal amount;
+    private String orderNo;
 
     private PayeeInfoDto payeeInfo;
 

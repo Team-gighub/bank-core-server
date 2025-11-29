@@ -10,8 +10,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuthorizeResponse {
-    /**
-     * 결제 요청 검증 후 발급되는 승인 토큰
-     */
+
+    private String orderNo;
     private String approvalToken;
+    private String escrowId;
 }
