@@ -8,10 +8,9 @@ import java.math.BigDecimal;
 @Component
 @Slf4j
 public class MockOpenBanking  {
-    private KftcRandomResponseGenerator kftcRandomResponseGenerator;
 
     public boolean isAccountValid(String bankCode, String accountNo, BigDecimal amount) {
-        boolean result = kftcRandomResponseGenerator.randomSuccess();
+        boolean result = KftcRandomResponseGenerator.randomSuccess();
         log.info("[MOCK 오픈뱅킹] 계좌 유효성: {}", result);
         return result;
     }
