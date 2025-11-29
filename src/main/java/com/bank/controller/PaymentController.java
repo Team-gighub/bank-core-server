@@ -6,7 +6,6 @@ import com.bank.deposit.dto.AuthorizeRequest;
 import com.bank.deposit.dto.AuthorizeResponse;
 import com.bank.deposit.service.PaymentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +24,7 @@ public class PaymentController {
         /* [계정계] 결제 요청 로직
         * | 결제하기 전, 요청한 결제가 유효하고 정상적인 사용자의 요청인지 인증하는 단계 | */
 
-        ApiResponse<AuthorizeResponse> response = paymentService.authorize(request);
-        return response;
+        AuthorizeResponse response = paymentService.authorize(request);
+        return ApiResponse.success(response);
     }
 }
