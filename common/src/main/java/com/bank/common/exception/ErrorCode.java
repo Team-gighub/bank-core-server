@@ -21,6 +21,7 @@ public enum ErrorCode {
     FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON_004", "접근 권한이 없습니다."),
     BALANCE_INSUFFICIENT(HttpStatus.FORBIDDEN, "BAL_3001", "잔액이 부족합니다."),
     VALIDATION_TOKEN_EXPIRED(HttpStatus.FORBIDDEN, "VAL_3001", "검증 토큰이 만료되었습니다."),
+    ACCOUNT_ABNORMAL_STATUS(HttpStatus.NOT_FOUND, "ACCT_3001", "계좌가 비정상 상태입니다."),
 
     // 404 Not Found
     ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "ACCT_4001", "계좌를 조회할 수 없습니다."),
