@@ -24,13 +24,6 @@ public class ValidateService {
     private final AccountRepository accountRepository;
     private final ExternalValidatePort externalValidatePort;
 
-    public String generateApprovalToken() {
-        // TODO: 2-1. 승인 토큰 생성 (UUID 또는 JWT 등)
-        // TODO: 2-3. 승인 토큰 만료 시간 설정
-
-        return UUID.randomUUID().toString();
-    }
-
     public void validatePayer(PayerInfoDto payer, BigDecimal amount) {
 
         // 1-1. 계좌의 은행이 당행인지 타행인지 식별 (은행코드 기준)
