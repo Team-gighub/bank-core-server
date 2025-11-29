@@ -26,72 +26,98 @@ public class LedgerService {
     private final LedgerRepository ledgerRepository;
     private final ExternalTransferPort externalTransferPort;
     private final AccountRepository accountRepository;
+    //로직 분리 -> leder 기록
+    private Ledger createLedger(
+            String accountId,
+            TransactionType transactionType,
+            DebitCredit debitCredit,
+            BigDecimal amount,
+            BigDecimal balanceBefore,
+            BigDecimal balanceAfter,
+            String counterpartyBankCode,
+            String counterpartyAccount,
+            String counterpartyName,
+            Description description) {
 
-    //당행 기록 로직
-    @Transactional
-    public void recodeSameBank(EscrowAccount escrowAccount){
-        //1. 에스크로 계좌 정보 기록 -> 예치
-        Ledger Escrowledger = new Ledger();
-        Escrowledger.setAccountId(escrowAccount.getEscrowAccountId());
-        Escrowledger.setTransactionType(TransactionType.DEPOSIT);
-        Escrowledger.setDebitCredit(DebitCredit.DEBIT);
-        Escrowledger.setAmount(escrowAccount.getHoldAmount());
-        Escrowledger.setBalanceBefore(BigDecimal.ZERO);
-        Escrowledger.setBalanceAfter(escrowAccount.getHoldAmount());
-        Escrowledger.setCounterpartyBankCode("020");
-        Escrowledger.setCounterpartyAccount(escrowAccount.getPayerAccount());
-        Escrowledger.setCounterpartyName(escrowAccount.getPayerName());
-        Escrowledger.setDescription(Description.에스크로계좌입금);
-        Escrowledger.setTransactionDatetime(LocalDateTime.now());
-        Escrowledger.setValueDate(LocalDate.now());
-        Escrowledger.setChannelType(ChannelType.BAAS);
-        ledgerRepository.save(Escrowledger);
-
-        // 2. 당행 계좌 정보 기록 -> 출금
-        Ledger Userledger = new Ledger();
-        Userledger.setAccountId(escrowAccount.getBankAccount().getAccountId());
-        Userledger.setTransactionType(TransactionType.WITHDRAWAL);
-        Userledger.setDebitCredit(DebitCredit.CREDIT);
-        Userledger.setAmount(escrowAccount.getHoldAmount());
-        Userledger.setBalanceBefore(escrowAccount.getBankAccount().getBalance());
-        Userledger.setBalanceAfter(escrowAccount.getBankAccount().getBalance().subtract(escrowAccount.getHoldAmount()));
-        Userledger.setCounterpartyBankCode("020");
-        Userledger.setCounterpartyAccount(escrowAccount.getPayerAccount());
-        Userledger.setCounterpartyName(escrowAccount.getPayerName());
-        Userledger.setDescription(Description.사용자계좌출금);
-        Userledger.setTransactionDatetime(LocalDateTime.now());
-        Userledger.setValueDate(LocalDate.now());
-        Userledger.setChannelType(ChannelType.BAAS);
-        ledgerRepository.save(Userledger);
-
-        //3. 사용자 계좌 잔액 변경(기존잔액 - hold 금액)
-        String accoutId = escrowAccount.getBankAccount().getAccountId();
-        Account account = accountRepository.findById(accoutId).orElseThrow(()->new CustomException(ErrorCode.INVALID_INPUT_VALUE));
-        account.setBalance(account.getBalance().subtract(escrowAccount.getHoldAmount()));
-
+        return Ledger.builder()
+                .accountId(accountId)
+                .transactionType(transactionType)
+                .debitCredit(debitCredit)
+                .amount(amount)
+                .balanceBefore(balanceBefore)
+                .balanceAfter(balanceAfter)
+                .counterpartyBankCode(counterpartyBankCode)
+                .counterpartyAccount(counterpartyAccount)
+                .counterpartyName(counterpartyName)
+                .description(description)
+                .transactionDatetime(LocalDateTime.now())
+                .valueDate(LocalDate.now())
+                .channelType(ChannelType.BAAS)
+                .build();
     }
+
+    // 당행 기록 로직
+    @Transactional
+    public void recodeSameBank(EscrowAccount escrowAccount) {
+
+        // 1. 에스크로 계좌 Ledger (입금)
+        Ledger escrowLedger = createLedger(
+                escrowAccount.getEscrowAccountId(),
+                TransactionType.DEPOSIT,
+                DebitCredit.DEBIT,
+                escrowAccount.getHoldAmount(),
+                BigDecimal.ZERO,
+                escrowAccount.getHoldAmount(),
+                "020",
+                escrowAccount.getPayerAccount(),
+                escrowAccount.getPayerName(),
+                Description.에스크로계좌입금
+        );
+        ledgerRepository.save(escrowLedger);
+
+        // 2. 사용자 계좌 Ledger (출금)
+        Account account = accountRepository.findById(escrowAccount.getBankAccount().getAccountId())
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_INPUT_VALUE));
+
+        Ledger userLedger = createLedger(
+                account.getAccountId(),
+                TransactionType.WITHDRAWAL,
+                DebitCredit.CREDIT,
+                escrowAccount.getHoldAmount(),
+                account.getBalance(),
+                account.getBalance().subtract(escrowAccount.getHoldAmount()),
+                "020",
+                escrowAccount.getPayerAccount(),
+                escrowAccount.getPayerName(),
+                Description.사용자계좌출금
+        );
+        ledgerRepository.save(userLedger);
+
+        // 3. 사용자 계좌 잔액 변경
+        account.setBalance(account.getBalance().subtract(escrowAccount.getHoldAmount()));
+    }
+
 
     // 타행 기록 로직
     @Transactional
-    public void recodeDifferentBank(EscrowAccount escrowAccount){
-        Ledger ledger = new Ledger();
-        //TODO : 금결원 호출
+    public void recodeDifferentBank(EscrowAccount escrowAccount) {
+
+        // TODO 외부이체 호출
         externalTransferPort.send("결제요청");
-        //ok 로 가정
-        //에스크로 계좌 정보 저장
-        ledger.setAccountId(escrowAccount.getEscrowAccountId());
-        ledger.setTransactionType(TransactionType.DEPOSIT);
-        ledger.setDebitCredit(DebitCredit.DEBIT);
-        ledger.setAmount(escrowAccount.getHoldAmount());
-        ledger.setBalanceBefore(BigDecimal.ZERO);
-        ledger.setBalanceAfter(escrowAccount.getHoldAmount());
-        ledger.setCounterpartyBankCode("020");
-        ledger.setCounterpartyAccount(escrowAccount.getPayerAccount());
-        ledger.setCounterpartyName(escrowAccount.getPayerName());
-        ledger.setDescription(Description.에스크로계좌입금);
-        ledger.setTransactionDatetime(LocalDateTime.now());
-        ledger.setValueDate(LocalDate.now());
-        ledger.setChannelType(ChannelType.BAAS);
+
+        Ledger ledger = createLedger(
+                escrowAccount.getEscrowAccountId(),
+                TransactionType.DEPOSIT,
+                DebitCredit.DEBIT,
+                escrowAccount.getHoldAmount(),
+                BigDecimal.ZERO,
+                escrowAccount.getHoldAmount(),
+                "020",
+                escrowAccount.getPayerAccount(),
+                escrowAccount.getPayerName(),
+                Description.에스크로계좌입금
+        );
         ledgerRepository.save(ledger);
     }
+
 }
