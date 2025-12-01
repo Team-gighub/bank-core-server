@@ -22,7 +22,7 @@ VALUES ('PAYEE_ACC_001', 'PAYEE_001', '020-99999-99999', 'CHECKING', 50000.00, '
 
 -- 3. EscrowAccount 데이터
 INSERT INTO escrow_accounts (
-    escrow_accunt_id, account_id, trace_id, hold_amount,
+    escrow_account_id, account_id, trace_id, hold_amount,
     payer_bank_code, payer_account, payer_name,
     payee_bank_code, payee_account, payee_name,
     scheduled_release_date, expired_date, hold_status, release_type,
