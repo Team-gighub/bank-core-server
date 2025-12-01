@@ -50,7 +50,7 @@ pipeline {
 
         stage('Deploy to EC2 (docker-compose)') {
             steps {
-                sshagent(credentials: ['deploy-key']) {
+                sshagent(credentials: ['onprem-key'']) {
                     sh """
                         ssh -o StrictHostKeyChecking=no ssh.gighub-bank.site '
                         cd ~/bank-core || mkdir ~/bank-core && cd ~/bank-core;
