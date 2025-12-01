@@ -8,6 +8,7 @@ import com.bank.deposit.domain.enums.AccountStatus;
 import com.bank.deposit.domain.enums.BankCode;
 import com.bank.deposit.dto.PayerInfoDto;
 import com.bank.deposit.repository.AccountRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class ValidateService {
     private final AccountRepository accountRepository;
     private final ExternalValidatePort externalValidatePort;
 
+    @Transactional
     public void validatePayer(PayerInfoDto payer, BigDecimal amount) {
 
         // 1-1. 계좌의 은행이 당행인지 타행인지 식별 (은행코드 기준)
