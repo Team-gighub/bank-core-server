@@ -1,10 +1,14 @@
 package com.bank.deposit.service;
 
+import com.bank.common.exception.CustomException;
+import com.bank.common.exception.ErrorCode;
+import com.bank.deposit.domain.Account;
 import com.bank.deposit.domain.EscrowAccount;
 import com.bank.deposit.domain.enums.HoldStatus;
 import com.bank.deposit.domain.enums.MerchantId;
 import com.bank.deposit.domain.enums.ReleaseType;
 import com.bank.deposit.dto.AuthorizeRequest;
+import com.bank.deposit.repository.AccountRepository;
 import com.bank.deposit.repository.EscrowAccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,12 +25,19 @@ import java.util.UUID;
 public class EscrowService {
 
     private final EscrowAccountRepository escrowAccountRepository;
+    private final AccountRepository accountRepository;
     private static final BigDecimal PLATFORM_FEE_RATE = new BigDecimal("0.03"); // 3%
     private static final int SCALE = 2; // 소수점 이하 2자리
     private static final RoundingMode ROUNDING_MODE = RoundingMode.HALF_UP; // 반올림 방식
 
+
+
     @Transactional
     public String createEscrow(AuthorizeRequest request) {
+
+        Account account = accountRepository
+                .findByAccountId("WOORI_20")
+                .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
 
         //수수료, payment_amount 값 계산
         BigDecimal holdAmount = request.getAmount();
@@ -50,6 +61,7 @@ public class EscrowService {
         EscrowAccount escrowAccount = EscrowAccount.builder()
                 // 필수 정보 및 계산된 정보
                 .escrowAccountId(newEscrowId)
+                .bankAccount(account)
                 .holdAmount(holdAmount)
                 .paymentAmount(paymentAmount)
                 .platformFee(platformFee)
