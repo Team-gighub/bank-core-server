@@ -12,6 +12,6 @@ public interface ExternalValidatePort {
      * @param amount 출금 금액
      * @return 출금 가능 여부
      */
-    boolean isWithdrawalPossible(String bankCode, String accountNo, BigDecimal amount);
+    boolean isWithdrawalPossible(String bankCode, String accountNo, BigDecimal amount,String traceId);
 
 }

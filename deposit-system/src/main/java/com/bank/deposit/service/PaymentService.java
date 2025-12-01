@@ -18,13 +18,13 @@ public class PaymentService {
         validateService.validatePayer(request.getPayerInfo(), request.getAmount());
 
         // 2. 승인 토큰 발급
-        String approvalToken = approvalTokenService.generate();
+        String confirmToken = approvalTokenService.generate();
 
         // 3. escrow 테이블 등록
         String escrowId = escrowService.createEscrow(request);
 
         // 4. response 반환
-        AuthorizeResponse response = new AuthorizeResponse(request.getOrderNo(), approvalToken, escrowId);
+        AuthorizeResponse response = new AuthorizeResponse(request.getOrderNo(), confirmToken, escrowId);
         return response;
     }
 
