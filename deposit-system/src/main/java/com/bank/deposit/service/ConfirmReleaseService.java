@@ -49,7 +49,7 @@ public class ConfirmReleaseService {
         validateAmounts(holdAmount, paymentAmount, platformFeeAmount);
 
         // 4. 플랫폼(고객사) 계좌 조회 및 검증 (수수료 입금 준비)
-        Account platformAccount = getPlatformAccount(request.getMerchantId());
+        Account platformAccount = getPlatformAccountWithLock(request.getMerchantId());
         validatePlatformAccount(platformAccount);
 
         // 5. 당행/타행 분기 - 수취인 지급 처리 먼저
@@ -91,7 +91,7 @@ public class ConfirmReleaseService {
     ) {
         // 1. 수취인 계좌 조회 및 검증
         Account payeeAccount = accountRepository
-                .findByAccountNumber(escrowAccount.getPayeeAccount())
+                .findWithLockByAccountNumber(escrowAccount.getPayeeAccount())
                 .orElseThrow(() -> new CustomException(ErrorCode.PAYEE_ACCOUNT_NOT_FOUND));
 
         validatePayeeAccount(payeeAccount);
@@ -126,9 +126,9 @@ public class ConfirmReleaseService {
     /**
      * 고객사(플랫폼) 계좌 조회
      */
-    private Account getPlatformAccount(String merchantId) {
+    private Account getPlatformAccountWithLock(String merchantId) {
         return accountRepository
-                .findByUserItscnoAndAccountType(merchantId, AccountType.CHECKING)
+                .findWithLockByUserItscnoAndAccountType(merchantId, AccountType.CHECKING)
                 .orElseThrow(() -> new CustomException(ErrorCode.PLATFORM_ACCOUNT_NOT_FOUND));
     }
 
