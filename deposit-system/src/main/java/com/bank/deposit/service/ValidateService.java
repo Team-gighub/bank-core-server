@@ -11,6 +11,7 @@ import com.bank.deposit.repository.AccountRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -24,9 +25,12 @@ public class ValidateService {
 
     private final AccountRepository accountRepository;
     private final ExternalValidatePort externalValidatePort;
-
+    private String getTraceId() {
+        return MDC.get("traceId");
+    }    // 에스크로 계좌 Ledger 공통 생성
     @Transactional
     public void validatePayer(PayerInfoDto payer, BigDecimal amount) {
+        log.info("계좌 인증 검증 시작 traceId = {}",getTraceId());
 
         // 1-1. 계좌의 은행이 당행인지 타행인지 식별 (은행코드 기준)
         boolean isSameBank = isSameBank(payer.getBankCode());
@@ -42,6 +46,8 @@ public class ValidateService {
         }
 
         log.info("{} validate success" , payer.getAccountNo());
+        log.info("계좌 인증 검증 끝 traceId = {}",getTraceId());
+
     }
 
 
@@ -82,7 +88,7 @@ public class ValidateService {
     // 2. 타행 계좌 출금 인증 검증
     private boolean checkExternalAccountValidate(String bankCode, String accountNo, BigDecimal amount) {
         log.info("{} check external account validate" , accountNo);
-        return externalValidatePort.isWithdrawalPossible(bankCode, accountNo, amount);
+        return externalValidatePort.isWithdrawalPossible(bankCode, accountNo, amount,getTraceId());
     }
 
 
