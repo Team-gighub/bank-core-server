@@ -8,6 +8,8 @@ WORKDIR /workspace
 COPY build.gradle settings.gradle ./
 COPY gradle gradle
 
+# 잠깐 테스트
+
 # 의존성 미리 다운로드 (캐시 활용)
 RUN gradle dependencies --no-daemon
 
