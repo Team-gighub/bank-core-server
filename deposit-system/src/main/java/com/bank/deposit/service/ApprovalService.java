@@ -19,7 +19,7 @@ public class ApprovalService {
     private final ApprovalTokenService approvalTokenService;
     @Transactional
     public ApprovalResponse recodeLedger(ApprovalRequest request){
-        //1. TODO: 토큰 검증
+        //1.토큰 검증
         String confirmToken = request.getConfirmToken();
         if(!approvalTokenService.isValid(confirmToken)){
             throw new CustomException(ErrorCode.VALIDATION_TOKEN_EXPIRED);
