@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "escrow_accounts")
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
