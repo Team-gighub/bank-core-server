@@ -1,5 +1,5 @@
 package com.bank.deposit.domain.enums;
 
 public enum UserType {
-    INDIVIDUAL
+    INDIVIDUAL, CORPORATE
 }

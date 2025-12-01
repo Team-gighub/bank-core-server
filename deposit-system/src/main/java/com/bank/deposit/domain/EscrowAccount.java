@@ -82,4 +82,10 @@ public class EscrowAccount {
     @Column(name = "merchant_order_no", length = 50)
     private String merchantOrderNo;
 
+    public void release() {
+        this.holdAmount = BigDecimal.ZERO;
+        this.holdStatus = HoldStatus.RELEASED;
+        this.holdEndDatetime = LocalDateTime.now();
+    }
+
 }
