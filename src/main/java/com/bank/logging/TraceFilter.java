@@ -19,7 +19,7 @@ public class TraceFilter implements Filter {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
 
-        String traceId = ((HttpServletRequest) request).getHeader(TRACE_ID_HEADER);
+        String traceId =httpRequest.getHeader(TRACE_ID_HEADER);
         if (traceId != null) {
             MDC.put(MDC_KEY, traceId);
         }

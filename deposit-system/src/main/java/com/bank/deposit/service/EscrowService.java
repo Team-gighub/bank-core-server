@@ -2,6 +2,7 @@ package com.bank.deposit.service;
 
 import com.bank.common.exception.CustomException;
 import com.bank.common.exception.ErrorCode;
+import com.bank.common.util.TraceIdUtil;
 import com.bank.deposit.domain.Account;
 import com.bank.deposit.domain.EscrowAccount;
 import com.bank.deposit.domain.enums.HoldStatus;
@@ -33,13 +34,10 @@ public class EscrowService {
     private static final int SCALE = 2; // 소수점 이하 2자리
     private static final RoundingMode ROUNDING_MODE = RoundingMode.HALF_UP; // 반올림 방식
 
-    private String getTraceId() {
-        return MDC.get("traceId");
-    }
 
     @Transactional
     public String createEscrow(AuthorizeRequest request) {
-        log.info("에스크로 계좌 생성 시작 traceId = {}",getTraceId());
+        log.info("에스크로 계좌 생성 시작 traceId = {}", TraceIdUtil.getTraceId());
 
         Account account = accountRepository
                 .findByAccountId("WOORI_20")
@@ -95,7 +93,7 @@ public class EscrowService {
         // save() 메서드는 저장 후 엔티티를 반환합니다.
         EscrowAccount savedEscrow = escrowAccountRepository.save(escrowAccount);
 
-        log.info("에스크로 계좌 생성 끝 traceId = {}",getTraceId());
+        log.info("에스크로 계좌 생성 끝 traceId = {}",TraceIdUtil.getTraceId());
         // 4. 저장된 escrowId 반환
         return savedEscrow.getEscrowAccountId();
 
