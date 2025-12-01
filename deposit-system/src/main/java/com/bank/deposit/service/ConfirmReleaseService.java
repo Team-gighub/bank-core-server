@@ -233,7 +233,7 @@ public class ConfirmReleaseService {
                 escrowAccount.getPayeeBankCode(),
                 escrowAccount.getPayeeAccount(),
                 escrowAccount.getPayeeName(),
-                Description.ESCROW_RELEASE_TO_PAYEE
+                Description.에스크로지급확정_에스크로출금_수취인
         );
 
         return ledgerRepository.save(ledger);
@@ -259,7 +259,7 @@ public class ConfirmReleaseService {
                 escrowAccount.getPayerBankCode(),
                 escrowAccount.getPayerAccount(),
                 escrowAccount.getPayerName(),
-                Description.ESCROW_RELEASE_FROM_PAYER
+                Description.에스크로지급확정_수취인입금
         );
 
         ledgerRepository.save(ledger);
@@ -283,7 +283,7 @@ public class ConfirmReleaseService {
                 BankCode.OUR_BANK.getCode(),
                 platformAccount.getAccountNumber(),
                 platformAccount.getUser().getCustomerName(),
-                Description.PLATFORM_FEE_COLLECTION
+                Description.에스크로지급확정_에스크로출금_수수료
         );
 
         ledgerRepository.save(ledger);
@@ -309,7 +309,7 @@ public class ConfirmReleaseService {
                 escrowAccount.getPayerBankCode(),
                 escrowAccount.getPayerAccount(),
                 escrowAccount.getPayerName(),
-                Description.PLATFORM_FEE_RECEIVED
+                Description.에스크로지급확정_플랫폼수수료입금
         );
 
         ledgerRepository.save(ledger);
