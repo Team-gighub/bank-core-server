@@ -12,7 +12,9 @@ import java.util.Optional;
 @Repository
 public interface AccountRepository extends JpaRepository<Account, String> {
     // 필요한 경우 추가적인 조회 메서드를 정의할 수 있습니다.
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Account> findByAccountNumber(String accountNumber);
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Account> findByAccountId(String accountId);
 }

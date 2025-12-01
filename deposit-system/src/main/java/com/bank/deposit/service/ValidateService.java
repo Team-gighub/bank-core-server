@@ -1,11 +1,14 @@
 package com.bank.deposit.service;
 
+import com.bank.common.exception.CustomException;
+import com.bank.common.exception.ErrorCode;
 import com.bank.common.port.ExternalValidatePort;
 import com.bank.deposit.domain.Account;
 import com.bank.deposit.domain.enums.AccountStatus;
 import com.bank.deposit.domain.enums.BankCode;
 import com.bank.deposit.dto.PayerInfoDto;
 import com.bank.deposit.repository.AccountRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,7 @@ public class ValidateService {
     private final AccountRepository accountRepository;
     private final ExternalValidatePort externalValidatePort;
 
+    @Transactional
     public void validatePayer(PayerInfoDto payer, BigDecimal amount) {
 
         // 1-1. 계좌의 은행이 당행인지 타행인지 식별 (은행코드 기준)
@@ -34,7 +38,7 @@ public class ValidateService {
                 : checkExternalAccountValidate(payer.getBankCode(), payer.getAccountNo(), amount);
 
         if (!isAccountActive) {
-            throw new RuntimeException("출금 불가");
+            throw new CustomException(ErrorCode.FORBIDDEN);
         }
 
         log.info("{} validate success" , payer.getAccountNo());
@@ -55,20 +59,20 @@ public class ValidateService {
         // 1-2. 계좌 상태 조회 (DB에서 상태 확인)
         Optional<Account> optAccount = accountRepository.findByAccountNumber(accountNo);
         if (optAccount.isEmpty()) {
-            throw new RuntimeException("계좌를 찾을 수 없습니다.");
+            throw new CustomException(ErrorCode.ACCOUNT_NOT_FOUND);
         }
 
         Account account = optAccount.get();
 
         if (account.getStatus() != AccountStatus.ACTIVE) {
-            throw new RuntimeException("계좌 상태가 비정상입니다.");
+            throw new CustomException(ErrorCode.ACCOUNT_ABNORMAL_STATUS);
         }
 
         log.info("check internal account status {}" , account.getStatus());
 
         // 1-5. 잔액 검증
         if (account.getBalance().compareTo(amount) < 0) {
-            throw new RuntimeException("잔액이 부족합니다.");
+            throw new CustomException(ErrorCode.BALANCE_INSUFFICIENT);
         }
         log.debug("internal account balance: {}, required amount: {}", account.getBalance(), amount);
 
