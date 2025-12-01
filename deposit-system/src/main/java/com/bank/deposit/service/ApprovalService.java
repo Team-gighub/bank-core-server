@@ -38,9 +38,13 @@ public class ApprovalService {
         else{
             ledgerService.recodeDifferentBank(escrowAccount);
         }
-
-        ApprovalResponse approvalResponse = new ApprovalResponse();
-        approvalResponse.setEscrowId(request.getEscrowId());
+        ApprovalResponse approvalResponse = new ApprovalResponse(
+                request.getEscrowId(),
+                escrowAccount.getHoldAmount(),
+                escrowAccount.getHoldStatus(),
+                escrowAccount.getPlatformFee(),
+                escrowAccount.getHoldStartDatetime()
+        );
         return approvalResponse;
     }
 }
