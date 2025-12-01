@@ -19,9 +19,6 @@ public interface AccountRepository extends JpaRepository<Account, String> {
      */
     Optional<Account> findByAccountNumber(String accountNumber);
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    Optional<Account> findByAccountId(String accountId);
-
     /**
      * 계좌 ID로 비관적 락을 걸고 조회
      * 잔액 변경이 필요한 경우 동시성 제어를 위해 사용
