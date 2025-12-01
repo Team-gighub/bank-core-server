@@ -5,6 +5,7 @@ plugins {
 dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+    implementation 'ch.qos.logback:logback-classic'
 
     implementation 'org.springframework:spring-context'
     implementation 'org.springframework:spring-web'
