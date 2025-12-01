@@ -33,7 +33,7 @@ public class ApprovalTokenService {
             return now < expireTime;
 
         } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
-            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+            throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
         }
     }
 }
