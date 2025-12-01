@@ -1,5 +1,6 @@
 package com.bank.common.port;
 
+
 import java.math.BigDecimal;
 
 public interface ExternalWithdrawPort {
@@ -11,6 +12,5 @@ public interface ExternalWithdrawPort {
      * @param amount 출금 금액
      * @return 출금 가능 여부
      */
-    boolean isWithdrawalSuccess(String bankCode, String accountNo, BigDecimal amount);
-
+    boolean isWithdrawalSuccess(String bankCode, String accountNo, BigDecimal amount,String traceId);
 }
