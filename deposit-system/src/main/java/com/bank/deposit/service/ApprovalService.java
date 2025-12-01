@@ -2,7 +2,6 @@ package com.bank.deposit.service;
 
 import com.bank.common.exception.CustomException;
 import com.bank.common.exception.ErrorCode;
-import com.bank.common.response.ApiResponse;
 import com.bank.deposit.domain.EscrowAccount;
 import com.bank.deposit.domain.enums.BankCode;
 import com.bank.deposit.dto.ApprovalRequest;
@@ -17,11 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class ApprovalService {
     private final LedgerService ledgerService;
     private final EscrowAccountRepository escrowAccountRepository;
-
+    private final ApprovalTokenService approvalTokenService;
     @Transactional
     public ApprovalResponse recodeLedger(ApprovalRequest request){
         //1. TODO: 토큰 검증
-
+        String confirmToken = request.getConfirmToken();
+        if(!approvalTokenService.isValid(confirmToken)){
+            throw new CustomException(ErrorCode.VALIDATION_TOKEN_EXPIRED);
+        }
         //2. 에스크로 계좌 PK로 지급인 은행 코드 조회
         EscrowAccount escrowAccount = escrowAccountRepository.findById(request.getEscrowId())
                 .orElseThrow(()->new CustomException(ErrorCode.INVALID_INPUT_VALUE));
@@ -41,5 +43,4 @@ public class ApprovalService {
         approvalResponse.setEscrowId(request.getEscrowId());
         return approvalResponse;
     }
-
 }
