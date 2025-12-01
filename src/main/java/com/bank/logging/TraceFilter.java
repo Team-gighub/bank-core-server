@@ -1,4 +1,6 @@
 package com.bank.logging;
+import com.bank.common.exception.CustomException;
+import com.bank.common.exception.ErrorCode;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.MDC;
@@ -23,6 +25,7 @@ public class TraceFilter implements Filter {
         if (traceId != null) {
             MDC.put(MDC_KEY, traceId);
         }
+        else throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
 
         try {
             chain.doFilter(request, response);
