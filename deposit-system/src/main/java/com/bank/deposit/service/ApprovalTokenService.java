@@ -1,5 +1,7 @@
 package com.bank.deposit.service;
 
+import com.bank.common.exception.CustomException;
+import com.bank.common.exception.ErrorCode;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -31,7 +33,7 @@ public class ApprovalTokenService {
             return now < expireTime;
 
         } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
-            return false;
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 }
