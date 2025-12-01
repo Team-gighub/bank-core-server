@@ -16,8 +16,8 @@ public class ExternalValidatePortImpl implements ExternalValidatePort {
     private final MockOpenBanking openBanking;
 
     @Override
-    public boolean isWithdrawalPossible(String bankCode, String accountNo, BigDecimal amount) {
-        log.info("외부 계좌 출금 가능 여부 조회 → {}, {}, {}", bankCode, accountNo, amount);
+    public boolean isWithdrawalPossible(String bankCode, String accountNo, BigDecimal amount,String traceId) {
+        log.info("외부 계좌 출금 가능 여부 조회 → {}, {}, {}, traceId = {}", bankCode, accountNo, amount,traceId);
         return openBanking.isAccountValid(bankCode, accountNo, amount);
 
     }

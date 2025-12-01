@@ -12,6 +12,6 @@ import lombok.Setter;
 public class AuthorizeResponse {
 
     private String orderNo;
-    private String approvalToken;
+    private String confirmToken;
     private String escrowId;
 }

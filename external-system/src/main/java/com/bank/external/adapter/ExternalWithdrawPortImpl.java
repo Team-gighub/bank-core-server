@@ -14,8 +14,8 @@ import java.math.BigDecimal;
 public class ExternalWithdrawPortImpl implements ExternalWithdrawPort {
     private final MockCommonBanking commonBanking;
     @Override
-    public boolean isWithdrawalSuccess(String bankCode, String accountNo, BigDecimal amount) {
-        log.info("외부 계좌 출금 성공 여부 조회 → {}, {}, {}", bankCode, accountNo, amount);
+    public boolean isWithdrawalSuccess(String bankCode, String accountNo, BigDecimal amount,String traceId) {
+        log.info("외부 계좌 출금 성공 여부 조회 → {}, {}, {}, traceId = {}", bankCode, accountNo, amount,traceId);
         return commonBanking.isWithdrawSuccess(bankCode, accountNo, amount);
 
     }

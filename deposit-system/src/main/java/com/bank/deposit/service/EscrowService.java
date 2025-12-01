@@ -2,6 +2,7 @@ package com.bank.deposit.service;
 
 import com.bank.common.exception.CustomException;
 import com.bank.common.exception.ErrorCode;
+import com.bank.common.util.TraceIdUtil;
 import com.bank.deposit.domain.Account;
 import com.bank.deposit.domain.EscrowAccount;
 import com.bank.deposit.domain.enums.HoldStatus;
@@ -11,8 +12,10 @@ import com.bank.deposit.dto.AuthorizeRequest;
 import com.bank.deposit.repository.AccountRepository;
 import com.bank.deposit.repository.EscrowAccountRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -22,6 +25,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EscrowService {
 
     private final EscrowAccountRepository escrowAccountRepository;
@@ -31,9 +35,9 @@ public class EscrowService {
     private static final RoundingMode ROUNDING_MODE = RoundingMode.HALF_UP; // 반올림 방식
 
 
-
     @Transactional
     public String createEscrow(AuthorizeRequest request) {
+        log.info("에스크로 계좌 생성 시작 traceId = {}", TraceIdUtil.getTraceId());
 
         Account account = accountRepository
                 .findWithLockByAccountId("WOORI_20")
@@ -89,8 +93,9 @@ public class EscrowService {
         // save() 메서드는 저장 후 엔티티를 반환합니다.
         EscrowAccount savedEscrow = escrowAccountRepository.save(escrowAccount);
 
-
+        log.info("에스크로 계좌 생성 끝 traceId = {}",TraceIdUtil.getTraceId());
         // 4. 저장된 escrowId 반환
         return savedEscrow.getEscrowAccountId();
+
     }
 }
