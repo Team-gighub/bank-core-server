@@ -4,10 +4,8 @@ pipeline {
     environment {
         DOCKER_IMAGE = "rudska6/bank-core"
         DOCKER_TAG = "latest"
-        EC2_HOST = "ssh.gighub-bank.site"       // 백엔드 서버 IP
+        EC2_HOST = credentials('ec2-host-core')    // 백엔드 서버 IP
         EC2_KEY = "deploy-key"                  // Jenkins SSH key ID
-        COMPOSE_FILE = "docker-compose.yml"
-        ENV_FILE = ".env"
     }
 
     stages {
