@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main',
+                git branch: 'feature/deploy-setting',
                     credentialsId: 'github',
                     url: 'https://github.com/Team-gighub/bank-core-server'
             }
@@ -50,15 +50,15 @@ pipeline {
             steps {
                 sshagent(credentials: ['onprem-key']) {
                     sh """
-                        ssh -o StrictHostKeyChecking=no ssh.gighub-bank.site '
+                        ssh -v ssh.gighub-bank.site '
                         cd ~/bank-core || mkdir ~/bank-core && cd ~/bank-core;
 
                         # 최신 이미지 pull
-                        docker pull bank-core;
+                        docker pull ${DOCKER_IMAGE}:${DOCKER_TAG};
 
-                        docker rm -f bank-core || true
+                        docker compose down;
 
-                        docker compose up -d bank-core
+                        docker compose up -d bank-core;
                     '
                     """
                 }
