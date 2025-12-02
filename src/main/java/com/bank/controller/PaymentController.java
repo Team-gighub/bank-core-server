@@ -11,6 +11,7 @@ import com.bank.deposit.dto.AuthorizeRequest;
 import com.bank.deposit.dto.AuthorizeResponse;
 import com.bank.deposit.service.PaymentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,7 +43,7 @@ public class PaymentController {
     }
 
     @PostMapping("/confirm")
-    public ApiResponse<EscrowReleaseResponse> confirmRelease(@RequestBody EscrowReleaseRequest request) {
+    public ApiResponse<EscrowReleaseResponse> confirmRelease(@Validated @RequestBody EscrowReleaseRequest request) {
         EscrowReleaseResponse response = confirmReleaseService.confirmRelease(request);
         return ApiResponse.success(response);
     }
