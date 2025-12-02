@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'feature/deploy-setting',
+                git branch: 'main',
                     credentialsId: 'github',
                     url: 'https://github.com/Team-gighub/bank-core-server'
             }
