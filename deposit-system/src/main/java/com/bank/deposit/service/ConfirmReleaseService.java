@@ -15,11 +15,13 @@ import com.bank.deposit.repository.AccountRepository;
 import com.bank.deposit.repository.EscrowAccountRepository;
 import com.bank.deposit.repository.LedgerRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -35,15 +37,24 @@ public class ConfirmReleaseService {
      * 지급확정 메인 로직
      */
     public EscrowReleaseResponse confirmRelease(EscrowReleaseRequest request) {
+        String traceId = TraceIdUtil.getTraceId();
+        log.info("[{}] 지급확정 시작 - escrowId: {}, merchantId: {}", 
+                traceId, request.getEscrowId(), request.getMerchantId());
 
         // 1. 에스크로 계좌 조회
         EscrowAccount escrowAccount = escrowAccountRepository
                 .findWithLockByEscrowAccountId(request.getEscrowId())
                 .orElseThrow(() -> new CustomException(ErrorCode.ESCROW_ACCOUNT_NOT_FOUND));
+        
+        log.info("[{}] 에스크로 계좌 조회 완료 - escrowId: {}, holdAmount: {}, paymentAmount: {}", 
+                traceId, escrowAccount.getEscrowAccountId(), 
+                escrowAccount.getHoldAmount(), escrowAccount.getPaymentAmount());
 
         // 2. 비즈니스 검증
         validateEscrowForRelease(escrowAccount);
         validateMerchant(escrowAccount, request.getMerchantId());
+        
+        log.info("[{}] 비즈니스 검증 완료", traceId);
 
         // 3. 금액 정보 준비
         BigDecimal holdAmount = escrowAccount.getHoldAmount();
@@ -52,23 +63,38 @@ public class ConfirmReleaseService {
 
         // 3-1. 금액 검증
         validateAmounts(holdAmount, paymentAmount, platformFeeAmount);
+        
+        log.info("[{}] 금액 정보 - holdAmount: {}, paymentAmount: {}, platformFeeAmount: {}", 
+                traceId, holdAmount, paymentAmount, platformFeeAmount);
 
         // 4. 플랫폼(고객사) 계좌 조회 및 검증 (수수료 입금 준비)
         Account platformAccount = getPlatformAccountWithLock(request.getMerchantId());
         validatePlatformAccount(platformAccount);
+        
+        log.info("[{}] 플랫폼 계좌 조회 완료 - accountNumber: {}, balance: {}", 
+                traceId, platformAccount.getAccountNumber(), platformAccount.getBalance());
 
         // 5. 당행/타행 분기 - 수취인 지급 처리 먼저
         Ledger escrowToPayeeLedger;
         if (isSameBank(escrowAccount.getPayeeBankCode())) {
+            log.info("[{}] 당행 이체 시작 - payeeBankCode: {}, payeeAccount: {}", 
+                    traceId, escrowAccount.getPayeeBankCode(), escrowAccount.getPayeeAccount());
             escrowToPayeeLedger = processInternalTransfer(escrowAccount, paymentAmount, platformFeeAmount);
         } else {
+            log.info("[{}] 타행 이체 시작 - payeeBankCode: {}, payeeAccount: {}", 
+                    traceId, escrowAccount.getPayeeBankCode(), escrowAccount.getPayeeAccount());
             escrowToPayeeLedger = processExternalTransfer(escrowAccount, paymentAmount, platformFeeAmount);
         }
+        
+        log.info("[{}] 수취인 지급 처리 완료 - ledgerSeq: {}", traceId, escrowToPayeeLedger.getLedgerSeq());
 
         // 6. 플랫폼 수수료 처리 (당행/타행 무관 - 수취인 지급 후)
         BigDecimal platformBalanceBefore = platformAccount.getBalance();
         platformAccount.deposit(platformFeeAmount);
         BigDecimal platformBalanceAfter = platformAccount.getBalance();
+        
+        log.info("[{}] 플랫폼 수수료 입금 완료 - platformFeeAmount: {}, balanceBefore: {}, balanceAfter: {}", 
+                traceId, platformFeeAmount, platformBalanceBefore, platformBalanceAfter);
 
         createEscrowToPlatformWithdrawalLedger(escrowAccount, platformAccount, platformFeeAmount);
         createPlatformDepositLedger(
@@ -81,8 +107,12 @@ public class ConfirmReleaseService {
 
         // 7. 에스크로 계좌 해지
         escrowAccount.release();
+        log.info("[{}] 에스크로 계좌 해지 완료 - escrowId: {}", traceId, escrowAccount.getEscrowAccountId());
 
         // 8. 응답 생성
+        log.info("[{}] 지급확정 완료 - escrowId: {}, ledgerSeq: {}", 
+                traceId, request.getEscrowId(), escrowToPayeeLedger.getLedgerSeq());
+        
         return EscrowReleaseResponse.fromLedgerSeq(escrowToPayeeLedger.getLedgerSeq());
     }
 
@@ -94,12 +124,17 @@ public class ConfirmReleaseService {
             BigDecimal paymentAmount,
             BigDecimal platformFeeAmount
     ) {
+        String traceId = TraceIdUtil.getTraceId();
+        
         // 1. 수취인 계좌 조회 및 검증
         Account payeeAccount = accountRepository
                 .findWithLockByAccountNumber(escrowAccount.getPayeeAccount())
                 .orElseThrow(() -> new CustomException(ErrorCode.PAYEE_ACCOUNT_NOT_FOUND));
 
         validatePayeeAccount(payeeAccount);
+        
+        log.info("[{}] 당행 수취인 계좌 조회 완료 - accountNumber: {}, balance: {}", 
+                traceId, payeeAccount.getAccountNumber(), payeeAccount.getBalance());
 
         // 2. 잔액 정보 캡처
         BigDecimal payeeBalanceBefore = payeeAccount.getBalance();
@@ -107,6 +142,9 @@ public class ConfirmReleaseService {
         // 3. 수취인 계좌 입금
         payeeAccount.deposit(paymentAmount);
         BigDecimal payeeBalanceAfter = payeeAccount.getBalance();
+        
+        log.info("[{}] 당행 수취인 입금 완료 - paymentAmount: {}, balanceBefore: {}, balanceAfter: {}", 
+                traceId, paymentAmount, payeeBalanceBefore, payeeBalanceAfter);
 
         // 4. 원장 기록 생성 (2개)
         // 4-1. 에스크로 → 수취인 출금
@@ -124,6 +162,8 @@ public class ConfirmReleaseService {
                 payeeBalanceBefore,
                 payeeBalanceAfter
         );
+        
+        log.info("[{}] 당행 이체 원장 기록 완료 - ledgerSeq: {}", traceId, escrowToPayeeLedger.getLedgerSeq());
 
         return escrowToPayeeLedger;
     }
@@ -139,19 +179,35 @@ public class ConfirmReleaseService {
         String bankCode = escrowAccount.getPayeeBankCode();
         String accountNumber = escrowAccount.getPayeeAccount();
         String traceId = TraceIdUtil.getTraceId();
+        
+        log.info("[{}] 타행 이체 검증 시작 - bankCode: {}, accountNumber: {}, amount: {}", 
+                traceId, bankCode, accountNumber, paymentAmount);
 
         // 1. 타행 이체 가능 검증
         if (!externalValidatePort.isDepositPossible(bankCode, accountNumber, paymentAmount, traceId)) {
+            log.error("[{}] 타행 이체 불가 - bankCode: {}, accountNumber: {}", 
+                    traceId, bankCode, accountNumber);
             throw new CustomException(ErrorCode.EXTERNAL_DEPOSIT_NOT_POSSIBLE);
         }
+        
+        log.info("[{}] 타행 이체 가능 검증 완료", traceId);
 
         // 2. 타행 입금 요청
         if (!externalDepositPort.isDepositSuccess(bankCode, accountNumber, paymentAmount, traceId)) {
+            log.error("[{}] 타행 입금 실패 - bankCode: {}, accountNumber: {}, amount: {}", 
+                    traceId, bankCode, accountNumber, paymentAmount);
             throw new CustomException(ErrorCode.EXTERNAL_DEPOSIT_FAILED);
         }
+        
+        log.info("[{}] 타행 입금 성공 - bankCode: {}, accountNumber: {}, amount: {}", 
+                traceId, bankCode, accountNumber, paymentAmount);
 
         // 3. 원장 기록 생성
-        return createEscrowToPayeeWithdrawalLedger(escrowAccount, paymentAmount, platformFeeAmount);
+        Ledger ledger = createEscrowToPayeeWithdrawalLedger(escrowAccount, paymentAmount, platformFeeAmount);
+        
+        log.info("[{}] 타행 이체 원장 기록 완료 - ledgerSeq: {}", traceId, ledger.getLedgerSeq());
+        
+        return ledger;
     }
 
     /**
