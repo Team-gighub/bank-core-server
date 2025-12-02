@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "ledger")
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -82,15 +81,15 @@ public class Ledger {
     //원장 생성 메서드
     public static Ledger create(
             String accountId,
-            TransactionType transactionType,
-            DebitCredit debitCredit,
-            BigDecimal amount,
-            BigDecimal balanceBefore,
-            BigDecimal balanceAfter,
+            TransactionType transactionType, // 거래 유형
+            DebitCredit debitCredit, // 차대구분
+            BigDecimal amount, // 거래 금액
+            BigDecimal balanceBefore, // 거래 전 잔액
+            BigDecimal balanceAfter, // 거래 후 잔액
             String counterpartyBankCode,
             String counterpartyAccount,
             String counterpartyName,
-            Description description
+            Description description // 적요
     ) {
 
         Ledger ledger = new Ledger();

@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "accounts")
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -78,5 +77,8 @@ public class Account {
         this.balance = this.balance.subtract(amount);
     }
 
+    public void deposit(BigDecimal amount) {
+        this.balance = this.balance.add(amount);
+    }
 
 }

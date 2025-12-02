@@ -40,7 +40,7 @@ public class EscrowService {
         log.info("에스크로 계좌 생성 시작 traceId = {}", TraceIdUtil.getTraceId());
 
         Account account = accountRepository
-                .findByAccountId("WOORI_20")
+                .findWithLockByAccountId("WOORI_20")
                 .orElseThrow(() -> new CustomException(ErrorCode.ACCOUNT_NOT_FOUND));
 
         //수수료, payment_amount 값 계산
