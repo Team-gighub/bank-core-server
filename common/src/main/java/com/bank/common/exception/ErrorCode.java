@@ -21,13 +21,13 @@ public enum ErrorCode {
     FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON_004", "접근 권한이 없습니다."),
     BALANCE_INSUFFICIENT(HttpStatus.FORBIDDEN, "BAL_3001", "잔액이 부족합니다."),
     VALIDATION_TOKEN_EXPIRED(HttpStatus.FORBIDDEN, "VAL_3001", "검증 토큰이 만료되었습니다."),
-    PLATFORM_ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "ESC_4003", "플랫폼 계좌를 조회할 수 없습니다."),
     ACCOUNT_ABNORMAL_STATUS(HttpStatus.FORBIDDEN, "ACCT_3001", "계좌가 비정상 상태입니다."),
 
     // 404 Not Found
     ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "ACCT_4001", "계좌를 조회할 수 없습니다."),
     ESCROW_ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "ESC_4001", "에스크로 계좌를 조회할 수 없습니다."),
     PAYEE_ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "ESC_4002", "수취인 계좌를 조회할 수 없습니다."),
+    PLATFORM_ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "ESC_4003", "플랫폼 계좌를 조회할 수 없습니다."),
 
     // 405 Method Not Allowed
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "COMMON_005", "지원하지 않는 HTTP 메서드입니다."),
@@ -46,6 +46,8 @@ public enum ErrorCode {
 
     // 500 Internal Server Error
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON_006", "서버 내부 오류가 발생했습니다."),
+    EXTERNAL_DEPOSIT_NOT_POSSIBLE(HttpStatus.INTERNAL_SERVER_ERROR, "EXTERNAL_001", "타행 이체가 불가능합니다."),
+    EXTERNAL_DEPOSIT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "EXTERNAL_002", "타행 입금 요청이 실패했습니다."),
 
     // 501 Not Implemented
     NOT_IMPLEMENTED(HttpStatus.NOT_IMPLEMENTED, "COMMON_007", "아직 구현되지 않은 기능입니다.");

@@ -2,6 +2,9 @@ package com.bank.deposit.service;
 
 import com.bank.common.exception.CustomException;
 import com.bank.common.exception.ErrorCode;
+import com.bank.common.port.ExternalDepositPort;
+import com.bank.common.port.ExternalDepositValidatePort;
+import com.bank.common.util.TraceIdUtil;
 import com.bank.deposit.domain.Account;
 import com.bank.deposit.domain.EscrowAccount;
 import com.bank.deposit.domain.Ledger;
@@ -25,6 +28,8 @@ public class ConfirmReleaseService {
     private final EscrowAccountRepository escrowAccountRepository;
     private final AccountRepository accountRepository;
     private final LedgerRepository ledgerRepository;
+    private final ExternalDepositValidatePort  externalValidatePort;
+    private final ExternalDepositPort externalDepositPort;
 
     /**
      * 지급확정 메인 로직
@@ -57,7 +62,7 @@ public class ConfirmReleaseService {
         if (isSameBank(escrowAccount.getPayeeBankCode())) {
             escrowToPayeeLedger = processInternalTransfer(escrowAccount, paymentAmount, platformFeeAmount);
         } else {
-            escrowToPayeeLedger = processExternalTransfer(escrowAccount, paymentAmount);
+            escrowToPayeeLedger = processExternalTransfer(escrowAccount, paymentAmount, platformFeeAmount);
         }
 
         // 6. 플랫폼 수수료 처리 (당행/타행 무관 - 수취인 지급 후)
@@ -121,6 +126,32 @@ public class ConfirmReleaseService {
         );
 
         return escrowToPayeeLedger;
+    }
+
+    /**
+     * 타행 수취인 지급 처리
+     */
+    private Ledger processExternalTransfer(
+            EscrowAccount escrowAccount,
+            BigDecimal paymentAmount,
+            BigDecimal platformFeeAmount
+    ) {
+        String bankCode = escrowAccount.getPayeeBankCode();
+        String accountNumber = escrowAccount.getPayeeAccount();
+        String traceId = TraceIdUtil.getTraceId();
+
+        // 1. 타행 이체 가능 검증
+        if (!externalValidatePort.isDepositPossible(bankCode, accountNumber, paymentAmount, traceId)) {
+            throw new CustomException(ErrorCode.EXTERNAL_DEPOSIT_NOT_POSSIBLE);
+        }
+
+        // 2. 타행 입금 요청
+        if (!externalDepositPort.isDepositSuccess(bankCode, accountNumber, paymentAmount, traceId)) {
+            throw new CustomException(ErrorCode.EXTERNAL_DEPOSIT_FAILED);
+        }
+
+        // 3. 원장 기록 생성
+        return createEscrowToPayeeWithdrawalLedger(escrowAccount, paymentAmount, platformFeeAmount);
     }
 
     /**
@@ -315,13 +346,4 @@ public class ConfirmReleaseService {
         ledgerRepository.save(ledger);
     }
 
-    /**
-     * TODO: 타행 수취인 지급 처리
-     */
-    private Ledger processExternalTransfer(
-            EscrowAccount escrowAccount,
-            BigDecimal paymentAmount
-    ) {
-        throw new CustomException(ErrorCode.NOT_IMPLEMENTED);
-    }
 }
