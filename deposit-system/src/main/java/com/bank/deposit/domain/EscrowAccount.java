@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class EscrowAccount {
 
     @Id
-    @Column(name = "escrow_accunt_id", length = 50, nullable = false)
+    @Column(name = "escrow_account_id", length = 50, nullable = false)
     private String escrowAccountId;
 
     @ManyToOne(fetch = FetchType.LAZY)
