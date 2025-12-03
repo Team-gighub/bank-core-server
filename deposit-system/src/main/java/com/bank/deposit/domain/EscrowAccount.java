@@ -12,14 +12,13 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "escrow_accounts")
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class EscrowAccount {
 
     @Id
-    @Column(name = "escrow_accunt_id", length = 50, nullable = false)
+    @Column(name = "escrow_account_id", length = 50, nullable = false)
     private String escrowAccountId;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -81,5 +80,11 @@ public class EscrowAccount {
 
     @Column(name = "merchant_order_no", length = 50)
     private String merchantOrderNo;
+
+    public void release() {
+        this.holdAmount = BigDecimal.ZERO;
+        this.holdStatus = HoldStatus.RELEASED;
+        this.holdEndDatetime = LocalDateTime.now();
+    }
 
 }
