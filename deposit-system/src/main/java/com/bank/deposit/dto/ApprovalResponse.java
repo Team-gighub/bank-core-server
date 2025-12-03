@@ -19,4 +19,6 @@ public class ApprovalResponse {
     private HoldStatus holdStatus;
     private BigDecimal platformFee;
     private LocalDateTime  holdStartDatetime;
+    private String payerBankCode;
+    private String payerAccount;
 }

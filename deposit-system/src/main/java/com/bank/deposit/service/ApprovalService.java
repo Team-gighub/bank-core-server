@@ -43,7 +43,9 @@ public class ApprovalService {
                 escrowAccount.getHoldAmount(),
                 escrowAccount.getHoldStatus(),
                 escrowAccount.getPlatformFee(),
-                escrowAccount.getHoldStartDatetime()
+                escrowAccount.getHoldStartDatetime(),
+                escrowAccount.getPayerBankCode(),
+                escrowAccount.getPayerAccount()
         );
         return approvalResponse;
     }
