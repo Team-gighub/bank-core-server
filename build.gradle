@@ -40,7 +40,7 @@ dependencies {
     implementation project(':common')
     implementation project(':deposit-system')
     implementation project(':external-system')
-
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
