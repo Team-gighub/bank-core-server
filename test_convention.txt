@@ -1,0 +1,95 @@
+테스트 코드 작성 컨벤션 문서 (AI 참고용)
+
+1. 테스트 기본 원칙
+- 테스트 코드는 FIRST 원칙을 따른다.
+Fast: 테스트는 빠르게 실행되어야 한다.
+Independent: 테스트 간 순서 의존성 없이 독립적으로 실행 가능해야 한다.
+Repeatable: 실행 환경과 무관하게 언제든 동일 결과를 보장해야 한다.
+Self-Validating: 테스트는 성공/실패가 명확해야 하며 사람이 눈으로 판단할 여지가 없어야 한다.
+Timely: 기능 개발 직후 또는 함께 작성한다.
+
+2. 테스트 구조
+모든 테스트는 Given / When / Then 구조를 따른다.
+
+Given: 테스트를 위한 준비(데이터, Mock 설정 등)
+When: 실제 실행하는 동작 또는 메서드 호출
+Then: 결과 검증(assertions)
+
+3. 테스트 종류와 기준
+
+단위 테스트(Unit Test)
+- Service, Component, Domain 등 개별 단위 로직 검증
+- 외부 시스템(DB, Network 등)에 의존하지 않는다
+- Mockito 기반 Mocking 사용
+- 테스트 속도가 매우 빨라야 한다
+
+통합 테스트(Integration Test)
+- DB, Redis 등 실제 인프라의 일부 또는 전체가 붙는 경우
+- @SpringBootTest, @DataJpaTest 등 사용
+- 단위 테스트에서 검증이 불가한 연동·트랜잭션·ORM 매핑 등을 검증
+
+E2E 테스트(End-to-End Test)
+- 실제 API End-to-End 흐름을 전부 검증
+- Mocking 최소화
+- API 요청 → Service → Repository → 외부 연동까지 실제 시나리오 테스트
+- 배포 전 검증용으로 사용
+
+4. 네이밍 규칙
+
+테스트 클래스명
+- {대상클래스명}Test 또는 {대상클래스명}IntegrationTest
+
+테스트 메서드명
+- 한글/영문 서술형 문장 모두 허용
+- "메서드명_상황_결과" 또는 "should_행동_or_결과" 형식 선호
+- 예: saveUser_동일이메일존재시_예외발생
+- 예: should_return_user_when_email_is_valid
+
+5. Mock 사용 규칙
+Mockito를 기본으로 사용
+Mock을 사용하는 경우 아래 원칙을 따른다.
+- 해당 테스트 단위 외부 의존성만 Mock으로 대체한다
+- 실제 검증 대상(Service 등)에는 @InjectMocks 사용
+- 필요 이상의 Mock 동작을 정의하지 않는다
+- verify는 ‘행동 검증이 필요한 경우’에만 사용한다
+
+6. Assertion 규칙
+assertThat() 기반 검증 권장
+하나의 테스트 메서드가 검증하는 대상은 하나의 기능 혹은 케이스
+예외 검증은 assertThrows() 또는 assertThatThrownBy() 사용
+boolean 비교 등에 직접 assertTrue/assertFalse는 지양하고 의미 있는 assertion 사용
+
+7. Fixture 및 테스트 데이터 작성 규칙
+테스트 데이터 생성은 중복되는 경우 별도 Fixture/Factory로 분리
+Fixture는 복잡한 대상을 빠르게 생성할 수 있게 명확한 의도를 가진 이름 사용
+단순 JSON body가 필요한 테스트는 문자열 하드코딩 대신 빌더 또는 Map 기반 생성 선호
+
+8. 통합 테스트 규칙
+실제 DB를 사용하는 경우 TestContainers 또는 H2 사용
+트랜잭션 롤백 원칙
+@Transactional을 사용하여 테스트 종료 시 롤백되도록 한다
+Spring Context 로딩은 비용이 크므로 필요 시에만 @SpringBootTest 사용
+Repository 테스트는 @DataJpaTest 선호
+
+9. E2E 테스트 규칙
+실제 API 요청을 기반으로 비즈니스 흐름 전체를 검증
+MockMvc 또는 WebTestClient 사용
+외부 시스템 호출은 WireMock 등으로 대체 가능
+API 스펙이 깨지는지 여부 판단 기준으로 사용
+장애 상황(예: 타임아웃, 실패 응답 등)도 포함하여 시나리오 기반으로 작성
+
+10. 테스트 커버리지 및 품질 기준
+핵심 도메인 로직은 90% 이상 커버리지 지향
+부가 로직·일반 Controller 단위는 70% 이상
+단위 테스트는 반드시 Happy Case + 주요 Exception Case 모두 작성
+AI가 테스트를 생성할 때도 가능한 모든 분기 검증을 포함하도록 한다
+
+11. 테스트 유지보수성 기준
+테스트 코드도 프로덕션 코드와 동일하게 리팩터링 대상이다
+중복 제거, 명확한 메서드명, 단일 책임 원칙 준수
+실제 코드 변경 시 테스트가 자연스럽게 변화해야 하며 불필요한 Mock 업데이트가 생기지 않도록 설계
+
+12. 테스트 환경
+JUnit5 사용
+Mockito / MockMvc / SpringBootTest 기반 환경
+Gradle 또는 Maven 의존성 관리 기준에 따라 공통 Test config 적용
