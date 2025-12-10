@@ -245,7 +245,7 @@ public class ConfirmReleaseService {
         }
 
         if (escrowAccount.getHoldAmount() == null
-                || escrowAccount.getHoldAmount().compareTo(BigDecimal.ZERO) <= 0) {
+                || escrowAccount.getHoldAmount().compareTo(BigDecimal.ZERO) < 0) {
             throw new CustomException(ErrorCode.INVALID_ESCROW_AMOUNT);
         }
     }
@@ -269,7 +269,7 @@ public class ConfirmReleaseService {
     }
 
     /**
-     * 금액 정합성 검증
+//     * 금액 정합성 검증
      */
     private void validateAmounts(
             BigDecimal holdAmount,
@@ -282,10 +282,13 @@ public class ConfirmReleaseService {
         }
 
         // 음수 체크
-        if (holdAmount.compareTo(BigDecimal.ZERO) <= 0
-                || paymentAmount.compareTo(BigDecimal.ZERO) <= 0
+        if (paymentAmount.compareTo(BigDecimal.ZERO) < 0
                 || platformFeeAmount.compareTo(BigDecimal.ZERO) < 0) {
             throw new CustomException(ErrorCode.INVALID_ESCROW_AMOUNT);
+        }
+
+        if (holdAmount.compareTo(BigDecimal.ZERO) == 0) {
+            throw new CustomException(ErrorCode.BALANCE_INSUFFICIENT);
         }
 
         // 금액 합계 검증: holdAmount = paymentAmount + platformFeeAmount
